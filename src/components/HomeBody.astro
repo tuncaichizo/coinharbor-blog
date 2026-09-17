@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ui } from '../i18n/ui';
+import { langPrefix, absoluteUrl } from '../config';
+import { exchanges } from '../data/exchanges';
+import { copy } from '../data/copy';
+
+export interface Props {
+  lang: 'en' | 'id' | 'tl';
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const pagePath = '/';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'CoinHarbor',
+  url: absoluteUrl(langPrefix(lang) || '/'),
+};
+---
+
+<BaseLayout lang={lang} pagePath={pagePath} title={t.homeTitle} description={t.homeDescription} jsonLd={jsonLd}>
+  <h1>{t.homeH1}</h1>
+  <p>{t.homeTagline}</p>
+  <p>{t.homeIntro}</p>
+
+  <h2>{t.homeExchangesHeading}</h2>
+  <ul class="exchange-list">
+    {exchanges.map((ex) => {
+      const c = copy[lang][ex.slug];
+      const href = `${langPrefix(lang)}/${ex.slug}/`;
+      return (
+        <li>
+          <h3><a href={href}>{ex.name}</a></h3>
+          <p>{c.intro[0]}</p>
+        </li>
+      );
+    })}
+  </ul>
+</BaseLayout>

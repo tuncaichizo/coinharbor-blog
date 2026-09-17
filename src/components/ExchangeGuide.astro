@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ui } from '../i18n/ui';
+import { langPrefix, absoluteUrl } from '../config';
+
+export interface Props {
+  lang: 'en' | 'id' | 'tl';
+  exchange: import('../data/exchanges').Exchange;
+  content: import('../data/copy').ExchangeCopy;
+}
+
+const { lang, exchange, content } = Astro.props;
+const t = ui[lang];
+const pagePath = `/${exchange.slug}/`;
+const feesPath = `${langPrefix(lang)}/${exchange.slug}/fees/`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: content.h1,
+  description: content.guideDescription,
+  dateModified: exchange.checkedDate,
+  url: absoluteUrl(`${langPrefix(lang)}${pagePath}`),
+};
+---
+
+<BaseLayout lang={lang} pagePath={pagePath} title={content.guideTitle} description={content.guideDescription} jsonLd={jsonLd}>
+  <h1>{content.h1}</h1>
+  {content.intro.map((p) => <p>{p}</p>)}
+
+  <p class="note">{t.checkedLabel} {exchange.checkedDate}</p>
+
+  <h2>{content.registerHeading}</h2>
+  <p>{content.registerBody}</p>
+
+  <h2>{content.accessHeading}</h2>
+  <p>{content.accessBody}</p>
+
+  {exchange.restrictedCountries && (
+    <details>
+      <summary>{exchange.restrictedCountries.length} {t.restrictedCountriesLabel}</summary>
+      <p>{exchange.restrictedCountries.join(', ')}</p>
+      {exchange.restrictedNote && <p class="note">{exchange.restrictedNote}</p>}
+    </details>
+  )}
+
+  <p><a href={feesPath}>{t.viewFeesLabel} &rarr;</a></p>
+
+  <a class="cta" href={exchange.signupUrl} rel="nofollow noopener" target="_blank">{content.ctaLabel}</a>
+  <p class="note">{content.notAffiliateNote}</p>
+
+  <h2>{t.sourcesLabel}</h2>
+  <ul>
+    {exchange.sources.map((s) => (
+      <li><a href={s.url} rel="nofollow noopener" target="_blank">{s.label}</a></li>
+    ))}
+  </ul>
+</BaseLayout>

@@ -1,0 +1,21 @@
+{
+  "name": "coinharbor-blog",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "audit:serp": "node scripts/audit/serp-length.mjs",
+    "audit:numbers": "node scripts/audit/number-consistency.mjs",
+    "audit:translation": "node scripts/audit/translation-depth.mjs",
+    "audit:render": "node scripts/audit/render-audit.mjs",
+    "audit:live": "node scripts/audit/live-numbers.mjs",
+    "audit:all": "npm run build && npm run audit:serp && npm run audit:numbers && npm run audit:translation && npm run audit:render"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "@astrojs/sitemap": "^3.2.1"
+  }
+}

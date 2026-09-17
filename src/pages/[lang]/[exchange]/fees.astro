@@ -1,0 +1,19 @@
+---
+import ExchangeFees from '../../../components/ExchangeFees.astro';
+import { exchanges } from '../../../data/exchanges';
+import { copy } from '../../../data/copy';
+
+export function getStaticPaths() {
+  const langs = ['id', 'tl'];
+  return langs.flatMap((lang) =>
+    exchanges.map((exchange) => ({
+      params: { lang, exchange: exchange.slug },
+      props: { lang, exchange },
+    }))
+  );
+}
+
+const { lang, exchange } = Astro.props;
+const content = copy[lang][exchange.slug];
+---
+<ExchangeFees lang={lang} exchange={exchange} content={content} />

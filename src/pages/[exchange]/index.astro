@@ -1,0 +1,16 @@
+---
+import ExchangeGuide from '../../components/ExchangeGuide.astro';
+import { exchanges } from '../../data/exchanges';
+import { copy } from '../../data/copy';
+
+export function getStaticPaths() {
+  return exchanges.map((exchange) => ({
+    params: { exchange: exchange.slug },
+    props: { exchange },
+  }));
+}
+
+const { exchange } = Astro.props;
+const content = copy.en[exchange.slug];
+---
+<ExchangeGuide lang="en" exchange={exchange} content={content} />

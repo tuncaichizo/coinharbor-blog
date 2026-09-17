@@ -1,0 +1,160 @@
+---
+import { LANGS, langPrefix, absoluteUrl, SITE_NAME } from '../config';
+import { ui } from '../i18n/ui';
+
+export interface Props {
+  lang: 'en' | 'id' | 'tl';
+  pagePath: string; // path with no language prefix, e.g. "/" or "/gems-trade/"
+  title: string;
+  description: string;
+  jsonLd?: Record<string, unknown>;
+  noindex?: boolean;
+}
+
+const { lang, pagePath, title, description, jsonLd, noindex } = Astro.props;
+const t = ui[lang];
+
+const canonicalPath = `${langPrefix(lang)}${pagePath}`;
+const canonicalUrl = absoluteUrl(canonicalPath === '' ? '/' : canonicalPath);
+
+const alternates = LANGS.map((l) => ({
+  lang: l,
+  href: absoluteUrl(`${langPrefix(l)}${pagePath}` === '' ? '/' : `${langPrefix(l)}${pagePath}`),
+}));
+const xDefaultHref = absoluteUrl(pagePath === '' ? '/' : pagePath);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    {!noindex && <link rel="canonical" href={canonicalUrl} />}
+    {!noindex && alternates.map((a) => (
+      <link rel="alternate" hreflang={a.lang} href={a.href} />
+    ))}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={xDefaultHref} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href={langPrefix(lang) || '/'}>{SITE_NAME}</a>
+      <nav>
+        <a href={langPrefix(lang) || '/'}>{t.navHome}</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>{t.footerDisclaimer}</p>
+      <p>&copy; {new Date().getFullYear()} {SITE_NAME}</p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --fg: #1a1a1a;
+    --bg: #ffffff;
+    --muted: #5a5a5a;
+    --accent: #0a6e5a;
+    --border: #e2e2e2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fg: #eaeaea;
+      --bg: #12151a;
+      --muted: #a0a0a0;
+      --accent: #35c8a4;
+      --border: #2a2f36;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--fg);
+    background: var(--bg);
+    line-height: 1.55;
+  }
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .site-header nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+  .site-footer {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  a { color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cta {
+    display: inline-block;
+    background: var(--accent);
+    color: #ffffff;
+    padding: 0.7rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 0.75rem 0;
+  }
+  .note {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .exchange-list {
+    list-style: none;
+    padding: 0;
+  }
+  .exchange-list li {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+</style>

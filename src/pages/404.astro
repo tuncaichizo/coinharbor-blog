@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ui } from '../i18n/ui';
+
+const t = ui.en;
+---
+<BaseLayout lang="en" pagePath="/404/" title={t.notFoundTitle} description={t.notFoundBody} noindex={true}>
+  <h1>{t.notFoundTitle}</h1>
+  <p>{t.notFoundBody}</p>
+  <p><a href="/">{t.notFoundCta}</a></p>
+</BaseLayout>

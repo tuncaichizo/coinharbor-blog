@@ -1,0 +1,13 @@
+---
+import HomeBody from '../../components/HomeBody.astro';
+
+export function getStaticPaths() {
+  return ['id', 'tl'].map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props;
+---
+<HomeBody lang={lang} />

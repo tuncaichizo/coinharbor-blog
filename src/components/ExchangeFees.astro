@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ui } from '../i18n/ui';
+import { langPrefix, absoluteUrl } from '../config';
+
+export interface Props {
+  lang: 'en' | 'id' | 'tl';
+  exchange: import('../data/exchanges').Exchange;
+  content: import('../data/copy').ExchangeCopy;
+}
+
+const { lang, exchange, content } = Astro.props;
+const t = ui[lang];
+const pagePath = `/${exchange.slug}/fees/`;
+const guidePath = `${langPrefix(lang)}/${exchange.slug}/`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: content.feesH1,
+  description: content.feesDescription,
+  dateModified: exchange.checkedDate,
+  url: absoluteUrl(`${langPrefix(lang)}${pagePath}`),
+};
+---
+
+<BaseLayout lang={lang} pagePath={pagePath} title={content.feesTitle} description={content.feesDescription} jsonLd={jsonLd}>
+  <p><a href={guidePath}>&larr; {t.backToGuide}</a></p>
+  <h1>{content.feesH1}</h1>
+  <p>{content.feesIntro}</p>
+  <p class="note">{t.checkedLabel} {exchange.checkedDate}</p>
+
+  <table>
+    <thead>
+      <tr><th>{exchange.name}</th><th>Maker</th><th>Taker</th></tr>
+    </thead>
+    <tbody>
+      {exchange.feeRows.map((row) => (
+        <tr><td>{row.label}</td><td>{row.maker}</td><td>{row.taker}</td></tr>
+      ))}
+    </tbody>
+  </table>
+
+  {exchange.feeNotes.map((n) => <p class="note">{n}</p>)}
+
+  <h2>{t.withdrawalHeading}</h2>
+  <p>{exchange.withdrawalFee}</p>
+
+  <a class="cta" href={exchange.signupUrl} rel="nofollow noopener" target="_blank">{content.ctaLabel}</a>
+  <p class="note">{content.notAffiliateNote}</p>
+
+  <h2>{t.sourcesLabel}</h2>
+  <ul>
+    {exchange.sources.map((s) => (
+      <li><a href={s.url} rel="nofollow noopener" target="_blank">{s.label}</a></li>
+    ))}
+  </ul>
+</BaseLayout>
