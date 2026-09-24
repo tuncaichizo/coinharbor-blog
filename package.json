@@ -15,7 +15,7 @@
     "audit:all": "npm run build && npm run audit:serp && npm run audit:numbers && npm run audit:translation && npm run audit:render"
   },
   "dependencies": {
-    "astro": "^5.0.0",
-    "@astrojs/sitemap": "^3.2.1"
+    "astro": "^7.3.5",
+    "@astrojs/sitemap": "^3.7.4"
   }
 }
